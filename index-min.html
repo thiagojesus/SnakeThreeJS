@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<title>SNAKE THREE JS!!!</title>
+			<script type="text/javascript" src="jquery/jquery1.11.2.min.js"></script>
+        	<script type="text/javascript" src="js/THREEx.WindowResize.js"></script>
+			<script type="text/javascript" src="js/THREEx.KeyboardState.js"></script>
+            <script src="three/three.min.js"></script>
+		<style>
+			body { margin: 0; background-color:#fff; }
+			canvas { width: 100%; height: 100% }
+			.control{
+				display:table;
+				font-family:Arial;
+				font-size:20px;
+				position:absolute;
+				z-index:9;
+				color:#fff;
+				top:5%;
+				left:5%;
+			}
+			.control #score{
+				font-size:26px;
+				font-weight:bold;
+				padding:5px 0 0 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="control">
+         arrows to move;</br>
+         click to change camera position;
+         <div id="score">
+           0
+         </div>
+        </div>
+		<script>function carregaCubo(){var e=.15;for(v=0;5>v;v++){var t,o=new THREE.BoxGeometry(e,e,e);t=new THREE.MeshBasicMaterial(0==qtdCube?{color:65280}:{color:16776960}),cube[qtdCube]=new THREE.Mesh(o,t),cube[qtdCube].position.set(e/2+qtdCube*e,e/2,e/2),scene.add(cube[qtdCube]),qtdCube++}}function aumentaCubo(){var e,t,o,s=.15,r=new THREE.BoxGeometry(s,s,s);o=new THREE.MeshBasicMaterial({color:16776960}),cube[qtdCube]=new THREE.Mesh(r,o),e=cube[qtdCube-1].position.z,t=cube[qtdCube-1].position.x,cube[qtdCube].position.set(t,s/2,e),scene.add(cube[qtdCube]),qtdCube++,document.getElementById("score").innerHTML=qtdCube-5}function resetCubo(){for(alert(qtdCube-5),v=0;qtdCube>v;v++)scene.remove(cube[v]);qtdCube=0,location.reload()}function carregaBall(){var e=.15,t=.075,o=new THREE.SphereGeometry(t,t,20),s=new THREE.MeshBasicMaterial({color:16711680,wireframe:!0});ball=new THREE.Mesh(o,s),ball.position.set(e/2+qtdCube*e,e/2,e/2),scene.add(ball)}function resetBall(){var e=.15,t=Math.floor(10*Math.random()),o=Math.floor(10*Math.random()),s=e/2,r=e/2,a=Math.floor(2*Math.random()+1),i=Math.floor(2*Math.random()+1);s+=e*t,r+=e*o,2==a&&(s=-1*s),2==i&&(r=-1*r),ball.position.set(s,e/2,r)}function carregaPlano(){var e=10*size,t=new THREE.PlaneGeometry(e,e,e,e),o=new THREE.ImageUtils.loadTexture("texturas/muro-border.jpg");o.wrapS=o.wrapT=THREE.RepeatWrapping,o.repeat.set(20,20);var s=new THREE.MeshBasicMaterial({map:o,side:THREE.DoubleSide});plano=new THREE.Mesh(t,s),plano.rotation.x=Math.PI/2,scene.add(plano)}function move(){recorrido=.15,obj_mov=cube,lastZ=obj_mov[0].position.z,lastX=obj_mov[0].position.x,1==up&&(obj_mov[0].position.z-=recorrido,moveSub(lastX,lastZ),moved=!0),1==bottom&&(obj_mov[0].position.z+=recorrido,moveSub(lastX,lastZ),moved=!0),1==left&&(obj_mov[0].position.x-=recorrido,moveSub(lastX,lastZ),moved=!0),1==right&&(obj_mov[0].position.x+=recorrido,moveSub(lastX,lastZ),moved=!0)}function moveSub(){var e,t;for(v=1;qtdCube>v;v++)e=obj_mov[v].position.z,t=obj_mov[v].position.x,obj_mov[v].position.z=lastZ,obj_mov[v].position.x=lastX,lastZ=e,lastX=t}var debug=0,v=0,tempo,distancia,recorrido,teclado=new THREEx.KeyboardState,left=!1,right=!1,up=!1,bottom=!1,lastFrameTime=0,lastFrameTimeKeys=0,lastX=0,lastZ=0,resetCalled=!1,start=!1,movedX=0,movedZ=0,keysPressed=[null],keyFirst,size=.3,cube=[],planeSize=[],qtdCube=0,effects=[],ball=0,plano,scene=new THREE.Scene,camera=new THREE.PerspectiveCamera(42,window.innerWidth/window.innerHeight,.1,1e3);camera.position.z=3,camera.position.y=1.52,camera.lookAt(scene.position);var renderer=new THREE.WebGLRenderer({alpha:!0});renderer.setClearColor(0,1),renderer.setSize(window.innerWidth,window.innerHeight),document.body.appendChild(renderer.domElement),THREEx.WindowResize(renderer,camera),Axis=new THREE.AxisHelper(100,100,100),scene.add(Axis),carregaCubo(),effects.push(function(){null!=ball&&(ball.rotation.y+=.05)}),carregaBall(),carregaPlano();var mouse={x:0,y:0};document.addEventListener("mousemove",function(e){mouse.x=e.clientX/window.innerWidth-.5,mouse.y=e.clientY/window.innerHeight-.5},!1),effects.push(function(e){camera.position.x+=3*(5*mouse.x-camera.position.x)*e/10,camera.lookAt(scene.position)}),effects.push(function(){if(null!==ball&&null!=cube){var e=ball.position.distanceTo(cube[0].position),t=ball.position.distanceTo(cube[1].position);(.12>e||.12>t)&&(resetBall(),aumentaCubo())}}),effects.push(function(){if(null!=cube&&0==resetCalled){var e=1.5;for((cube[0].position.x>e||cube[0].position.x<-e||cube[0].position.z>e||cube[0].position.z<-e)&&(resetCalled=!0,resetCubo()),v=1;qtdCube>v;v++){var t=cube[v].position.distanceTo(cube[0].position),o=cube[1].position.distanceTo(cube[0].position);(.1>=t||.1>=o)&&(resetCalled=!0,resetCubo())}400==qtdCube&&(resetCalled=!0,resetCubo(),alert("LOL - YOU WON!"))}}),effects.push(function(){if(null!=cube){var e=100,t=Date.now();frametimeKeys=t-lastFrameTimeKeys,teclado.pressed("up")&&0==bottom?frametimeKeys>=e?(left=!1,right=!1,up=!0,bottom=!1,start=!0,keyFirst="up",lastFrameTimeKeys=Date.now()):null==keysPressed[0]&&"up"!=keyFirst&&(keysPressed[0]="up"):teclado.pressed("down")&&0==up?frametimeKeys>=e?(left=!1,right=!1,up=!1,bottom=!0,start=!0,keyFirst="down",lastFrameTimeKeys=Date.now()):null==keysPressed[0]&&"down"!=keyFirst&&(keysPressed[0]="down"):teclado.pressed("left")&&0==right?frametimeKeys>=e?(left=!0,right=!1,up=!1,bottom=!1,start=!0,keyFirst="left",lastFrameTimeKeys=Date.now()):null==keysPressed[0]&&"left"!=keyFirst&&(keysPressed[0]="left"):teclado.pressed("right")&&0==left&&1==start&&(frametimeKeys>=e?(left=!1,right=!0,up=!1,bottom=!1,keyFirst="right",lastFrameTimeKeys=Date.now()):null==keysPressed[0]&&"right"!=keyFirst&&(keysPressed[0]="right"));var o=Date.now(),s=o-lastFrameTime;s>=e&&(move(),null!=keysPressed[0]&&("up"==keysPressed[0]?(left=!1,right=!1,up=!0,bottom=!1):"down"==keysPressed[0]?(left=!1,right=!1,up=!1,bottom=!0):"left"==keysPressed[0]?(left=!0,right=!1,up=!1,bottom=!1):"right"==keysPressed[0]&&(left=!1,right=!0,up=!1,bottom=!1),keysPressed[0]=null,move()),lastFrameTime=o)}}),effects.push(function(){null!=renderer&&renderer.render(scene,camera)});var lastTimeMsec=null;requestAnimationFrame(function e(t){requestAnimationFrame(e),lastTimeMsec=lastTimeMsec||t-1e3/60;var o=Math.min(200,t-lastTimeMsec);lastTimeMsec=t,effects.forEach(function(e){e(o/1e3,t/1e3)})}),$(document).ready(function(){$("body").click(function(){3==camera.position.z?(camera.position.z=1,camera.position.y=4.2,camera.lookAt(scene.position)):(camera.position.z=3,camera.position.y=1.52,camera.lookAt(scene.position))})});
+		</script>
+	</body>
+</html>
